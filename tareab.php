@@ -11,7 +11,7 @@
   while ($row =mysqli_fetch_array($r)) {
     $json[]=array( 'nonbre'=>$row['nombre'],'descripcion'=>$row['descripcion'],'id'=>$row['id']);
 }
-$jsonstring= json_encode($json);
+$jsonstring=json_encode($json);
 echo $jsonstring;
 
 
