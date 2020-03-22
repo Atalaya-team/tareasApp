@@ -1,5 +1,7 @@
 $(document).ready(function() {
   console.log("fuciona JQuery");
+  let editar=false;
+
   $("#tarearesul").hide();
    listar();
   //busqueda tarea
@@ -21,7 +23,8 @@ $(document).ready(function() {
             tareas.forEach(tarea => {
               console.log(tarea);
               plantilla += `
-                       <li><a href="#" ">${tarea.nonbre}</a></li>
+                       
+                       <li><a href="" ">${tarea.nonbre} </a>: ${tarea.descripcion}</li>
                       `;
             });
             $("#tarearesul").show();
@@ -36,11 +39,16 @@ $(document).ready(function() {
   //agregar tarea
   $("#tarea-form").submit(function(e) {
     const postData = {
+      id: $("#id").val(),
       name: $("#name").val(),
       descripcion: $("#descripcion").val()
     };
-    $.post("agtarea.php", postData, function(response) {
+
+    let url= editar == false ? 'agtarea.php':'edtarea.php';
+
+    $.post(url, postData, function(response) {
       listar();
+      
       $("#tarea-form").trigger("reset");
     });
     e.preventDefault();
@@ -58,7 +66,7 @@ $(document).ready(function() {
             plantilla += `
                        <tr tid=${tarea.id}>
                        <td>${tarea.id}</td>
-                       <td>${tarea.nonbre}</td>
+                       <td><a href="" class="item-t">${tarea.nonbre}</a></td>
                        <td>${tarea.descripcion}</td>
                        <td>
                        <button class=" borrar btn btn-danger">BORRAR</button>
@@ -68,21 +76,39 @@ $(document).ready(function() {
             
           });
           $("#tareas").html(plantilla);
-          
+        editar= false;  
       }
     );
   }
 
   $(document).on('click','.borrar' ,function () {
+   if (confirm('DESEA BORRAR LA TAREA')) {
     let elemento= $(this)[0].parentElement.parentElement;
-          let id= $(elemento).attr('tid');
-          console.log(id);
-      $.post("borrart.php", {id},
-        function (response) {
-          console.log(response);
-          listar();
-        }
-      );
+    let id= $(elemento).attr('tid');
+    
+$.post("borrart.php", {id},
+  function (response) {
+        listar();
+  }
+);
+     
+   }
   });
+  
 
+  $(document).on('click','.item-t', function () {
+    let elemento= $(this)[0].parentElement.parentElement;
+    let id= $(elemento).attr('tid');
+    $.post("selectarea.php", {id},
+      function (response) {
+        const tarea =JSON.parse(response)
+          $('#name').val(tarea.nonbre);
+          $('#descripcion').val(tarea.descripcion);
+          $('#id').val(tarea.id);
+          
+          editar=true;
+      }
+    );
+  });
+  
 });

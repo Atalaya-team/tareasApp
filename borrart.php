@@ -10,7 +10,7 @@ if (isset($_POST['id'])) {
     if (!$r) {
         die('Error de sentencia');
      }
-echo'tarrea borrada';
+echo'tarea borrada';
 }
 
 
